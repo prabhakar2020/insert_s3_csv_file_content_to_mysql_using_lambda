@@ -6,7 +6,7 @@ We can use this code snippet in AWS lambda function to pull the CSV file content
 mkdir /home/RDSCode
 cd /home/RDSCode
 pip install -t /home/RDSCode pymysql
-touch lambda_handler.py 
+touch lambda_function.py 
 ```
 *. *Copy below code into lambda_handler.py*
 
