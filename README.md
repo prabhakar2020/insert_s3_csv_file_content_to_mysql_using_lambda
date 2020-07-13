@@ -64,3 +64,4 @@ zip -r . RDScode.zip
 ```
 
 *. Upload this code on your AWS Lambda function
+![alt text](https://github.com/prabhakar2020/insert_s3_csv_file_content_to_mysql_using_lambda/blob/master/aws_lambda_upload_code.png)
