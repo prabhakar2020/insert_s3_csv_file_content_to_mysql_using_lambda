@@ -10,13 +10,14 @@ touch lambda_handler.py
 ```
 *. *Copy below code into lambda_handler.py*
 
-```import pymysql
+```
 import boto3
+import pymysql
 
 s3_cient = boto3.client('s3')
 
 # Read CSV file content from S3 bucket
-def read_data_from_s3():
+def read_data_from_s3(event):
     bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
     s3_file_name = event["Records"][0]["s3"]["object"]["key"]
     resp = s3_cient.get_object(Bucket=bucket_name, Key=s3_file_name)
@@ -26,7 +27,7 @@ def read_data_from_s3():
     return data
 
 def lambda_handler(event, context):
-    rds_endpoint  = "<<mysql RDS endpoint>>"
+    rds_endpoint  = ""
     username = "admin"
     password = "" # RDS Mysql password
     db_name = "" # RDS MySQL DB name
@@ -43,16 +44,22 @@ def lambda_handler(event, context):
     except:
         pass
 
-    data = read_data_from_s3()
+    data = read_data_from_s3(event)
 
     with conn.cursor() as cur:
         for emp in data: # Iterate over S3 csv file content and insert into MySQL database
-            emp = emp.replace("\n","").split(",")
-            cur.execute('insert into Employees (Name) values("'+str(emp[1])+'")')
-            conn.commit()
+            try:
+                emp = emp.replace("\n","").split(",")
+                print (">>>>>>>"+str(emp))
+                cur.execute('insert into Employees (Name) values("'+str(emp[1])+'")')
+                conn.commit()
+            except:
+                continue
         cur.execute("select count(*) from Employees")
-        for row in cur:
-            print (row)
+        print ("Total records on DB :"+str(cur.fetchall()[0]))
+        # Display employee table records
+        # for row in cur:
+        #     print (row)
     if conn:
         conn.commit()
 
